@@ -108,9 +108,11 @@
               <div class="input_container">
                 <p>Upload Image</p>
                 <label>
-                  <FormKit
+                  <input
                     type="file"
                     accept=".jpg,.png,.svg"
+                    style="border: none;"
+                   
                   />
                 </label>
               </div>
@@ -201,7 +203,8 @@ export default {
       address: "",
       phone: "",
       gender: "",
-      date:''
+      date:'',
+      img:''
     };
   },
   validations() {
@@ -212,6 +215,7 @@ export default {
       email: { required, email }, // Matches this.contact.email
       na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
       password: { required, minLength: minLength(8) },
+      img:{required},
       confirmPassword: {
         required,
         sameAsPassword: sameAs(this.password), // can be a reference to a field or computed property
