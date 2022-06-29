@@ -83,10 +83,20 @@
               <div class="input_container">
                 <p>Address</p>
                 <label>
-                  <input type="text" v-model="address" />
-                  <div v-if="v$.address.$error" class="error">
-                    address field has an error.
+                  <div class="form-group" v-for="(input, k) in inputs" :key="k">
+                    <input type="text" v-model="input.addresss"  />
+                   
+                    <button
+                      @click="remove(k)"
+                      v-show="k || (!k && inputs.length > 1)"
+                    >
+                      -
+                    </button>
+                    <button @click="add(k)" v-show="k == inputs.length - 1">
+                      +
+                    </button>
                   </div>
+                
                 </label>
               </div>
             </div>
@@ -94,9 +104,18 @@
               <div class="input_container">
                 <p>Phone Number</p>
                 <label>
-                  <input type="text" v-model="phone" />
-                  <div v-if="v$.phone.$error" class="error">
-                    phone field has an error.
+                  <div class="form-group" v-for="(input, k) in inputs2" :key="k">
+                    <input type="text" v-model="input.phonee"  />
+                   
+                    <button
+                      @click="remove2(k)"
+                      v-show="k || (!k && inputs2.length > 1)"
+                    >
+                      -
+                    </button>
+                    <button @click="add2(k)" v-show="k == inputs2.length - 1">
+                      +
+                    </button>
                   </div>
                 </label>
               </div>
@@ -111,8 +130,7 @@
                   <input
                     type="file"
                     accept=".jpg,.png,.svg"
-                    style="border: none;"
-                   
+                    style="border: none"
                   />
                 </label>
               </div>
@@ -144,7 +162,7 @@
                       v-model="gender"
                       style="width: 20%"
                     />
-                    <label for="fmale">male</label><br />
+                    <label for="fmale">Female</label><br />
                   </label>
                   <div v-if="v$.gender.$error" class="error">
                     gander field has an error.
@@ -168,7 +186,14 @@
 
           <div class="row">
             <div class="col-xl-12 col-sm-12 col-12">
-              <button type="button" class="btn btn-secondary" style="margin-top: 50px;" @click="submit()">Sumbit</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                style="margin-top: 50px"
+                @click="submit()"
+              >
+                Sumbit
+              </button>
             </div>
           </div>
         </div>
@@ -203,8 +228,18 @@ export default {
       address: "",
       phone: "",
       gender: "",
-      date:'',
-      img:''
+      date: "",
+      img: "",
+      inputs: [
+        {
+          addresss: "",
+        },
+      ],
+      inputs2: [
+        {
+          phonee: "",
+        },
+      ]
     };
   },
   validations() {
@@ -215,7 +250,7 @@ export default {
       email: { required, email }, // Matches this.contact.email
       na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
       password: { required, minLength: minLength(8) },
-      img:{required},
+      img: { required },
       confirmPassword: {
         required,
         sameAsPassword: sameAs(this.password), // can be a reference to a field or computed property
@@ -228,9 +263,23 @@ export default {
         required,
         minLength: minLength(1),
       },
-      date:{
-        required
-      }
+      date: {
+        required,
+      },
+      inputs: {
+        $each: {
+          addresss: {
+            required,
+          },
+        },
+      },
+      inputs2: {
+        $each: {
+          phonee: {
+            required,
+          },
+        },
+      },
     };
   },
   methods: {
@@ -244,6 +293,26 @@ export default {
       }
       // perform async actions
     },
+    add() {
+      this.inputs.push({
+        name: "",
+      });
+      console.log(this.inputs);
+    },
+    add2(){
+        this.inputs2.push({
+        phonee: "",
+      });
+      console.log(this.inputs2);
+    },
+
+    remove(index) {
+      this.inputs.splice(index, 1);
+    },
+    remove2(index) {
+      this.inputs2.splice(index, 1);
+    },
+
   },
 };
 </script>
@@ -287,8 +356,43 @@ section {
         display: flex;
         /* justify-content: space-evenly; */
         flex-direction: row;
-        justify-content: space-evenly;
-        width: 19%;
+        justify-content: flex-start;
+        align-items: center;
+        width: 33%;
+      }
+      .form-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        width: 100%;
+        .is-error{
+            background-color: red;
+          }
+        input {
+          width: 99%;
+          height: 40px;
+          color: #ababab;
+          border: 1px solid #ababab;
+          .is-error{
+            background-color: red;
+          }
+        }
+
+        button {
+          margin-left: 20px;
+          border-radius: 50px;
+          border: none;
+          background-color: #ababab;
+          color: #f8f8f8;
+          padding: 5px;
+          width: 25px;
+          height: 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
       }
 
       input {
