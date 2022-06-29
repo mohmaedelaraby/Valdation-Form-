@@ -83,9 +83,8 @@
               <div class="input_container">
                 <p>Address</p>
                 <label>
-                  <div class="form-group" v-for="(input, k) in inputs" :key="k">
-                    <input type="text" v-model="input.addresss"  />
-                   
+                  <div class="form-group" v-for="(input, k) in state.collection" :key="k">
+                    <input v-model="input.name" type="text"  :class="{'is-error': v$.collection.$each.$response.$errors[index].name.length,}" />
                     <button
                       @click="remove(k)"
                       v-show="k || (!k && inputs.length > 1)"
@@ -95,8 +94,16 @@
                     <button @click="add(k)" v-show="k == inputs.length - 1">
                       +
                     </button>
+
+                    <div
+                      v-for="error in v$.collection.$each.$response.$errors[
+                        index
+                      ].name"
+                      :key="error"
+                    >
+                      {{ error.$message }}
+                    </div>
                   </div>
-                
                 </label>
               </div>
             </div>
@@ -104,9 +111,16 @@
               <div class="input_container">
                 <p>Phone Number</p>
                 <label>
-                  <div class="form-group" v-for="(input, k) in inputs2" :key="k">
-                    <input type="text" v-model="input.phonee"  />
-                   
+                  <div
+                    class="form-group"
+                    v-for="(input, k) in inputs2"
+                    :key="k"
+                  >
+                    <input
+                      type="text"
+                      v-model="input.phonee"
+                    />
+
                     <button
                       @click="remove2(k)"
                       v-show="k || (!k && inputs2.length > 1)"
@@ -210,11 +224,26 @@ import {
   minLength,
   maxLength,
   sameAs,
+  helpers,
 } from "@vuelidate/validators";
+import { reactive } from "vue";
 
 export default {
   setup() {
-    return { v$: useVuelidate() };
+    const rules = {
+      collection: {
+        $each: helpers.forEach({
+          name: {
+            required,
+          },
+        }),
+      },
+    };
+    const state = reactive({
+      collection: [{ name: "" }, { name: "bar" }],
+    });
+    const v = useVuelidate(rules, state);
+    return { v$: useVuelidate(), rules, v };
   },
 
   data() {
@@ -239,7 +268,7 @@ export default {
         {
           phonee: "",
         },
-      ]
+      ],
     };
   },
   validations() {
@@ -267,18 +296,18 @@ export default {
         required,
       },
       inputs: {
-        $each: {
+        $each: helpers.forEach({
           addresss: {
             required,
           },
-        },
+        }),
       },
       inputs2: {
-        $each: {
+        $each: helpers.forEach({
           phonee: {
             required,
           },
-        },
+        }),
       },
     };
   },
@@ -299,8 +328,8 @@ export default {
       });
       console.log(this.inputs);
     },
-    add2(){
-        this.inputs2.push({
+    add2() {
+      this.inputs2.push({
         phonee: "",
       });
       console.log(this.inputs2);
@@ -312,7 +341,6 @@ export default {
     remove2(index) {
       this.inputs2.splice(index, 1);
     },
-
   },
 };
 </script>
@@ -366,15 +394,15 @@ section {
         justify-content: space-between;
 
         width: 100%;
-        .is-error{
-            background-color: red;
-          }
+        .is-error {
+          background-color: red;
+        }
         input {
           width: 99%;
           height: 40px;
           color: #ababab;
           border: 1px solid #ababab;
-          .is-error{
+          .is-error {
             background-color: red;
           }
         }
