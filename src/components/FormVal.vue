@@ -9,8 +9,11 @@
                 <p>First Name</p>
                 <label>
                   <input v-model="fName" />
-                  <div v-if="v$.fName.$error" class="error">
+                  <div v-if="v.fName.$error" class="error">
                     Name field has an error.
+                  </div>
+                  <div v-for="error in v.fName.$error" :key="error">
+                    ERR- {{ error.$message }}
                   </div>
                 </label>
               </div>
@@ -20,7 +23,7 @@
                 <p>Last Name</p>
                 <label>
                   <input type="text" v-model="lName" />
-                  <div v-if="v$.lName.$error" class="error">
+                  <div v-if="v.lName.$error" class="error">
                     Name field has an error.
                   </div>
                 </label>
@@ -34,7 +37,7 @@
                 <p>E-Mail</p>
                 <label>
                   <input type="text" v-model="email" />
-                  <div v-if="v$.email.$error" class="error">
+                  <div v-if="v.email.$error" class="error">
                     Email field has an error.
                   </div>
                 </label>
@@ -45,7 +48,7 @@
                 <p>National ID</p>
                 <label>
                   <input type="text" v-model="na_ID" />
-                  <div v-if="v$.na_ID.$error" class="error">
+                  <div v-if="v.na_ID.$error" class="error">
                     Nationl ID field has an error.
                   </div>
                 </label>
@@ -59,7 +62,7 @@
                 <p>Password</p>
                 <label>
                   <input type="text" v-model="password" />
-                  <div v-if="v$.password.$error" class="error">
+                  <div v-if="v.password.$error" class="error">
                     password field has an error.
                   </div>
                 </label>
@@ -70,7 +73,7 @@
                 <p>Confirm Password</p>
                 <label>
                   <input type="text" v-model="confirmPassword" />
-                  <div v-if="v$.confirmPassword.$error" class="error">
+                  <div v-if="v.confirmPassword.$error" class="error">
                     confirmPassword field has an error.
                   </div>
                 </label>
@@ -83,8 +86,20 @@
               <div class="input_container">
                 <p>Address</p>
                 <label>
-                  <div class="form-group" v-for="(input, k) in state.collection" :key="k">
-                    <input v-model="input.name" type="text"  :class="{'is-error': v$.collection.$each.$response.$errors[index].name.length,}" />
+                  <div
+                    class="form-group"
+                    v-for="(input, k) in addresses"
+                    :key="k"
+                  >
+                    <input
+                      v-model="input.name"
+                      type="text"
+                      :class="{
+                        'is-error':
+                          v.addresses.$each.$response.$errors[index].name
+                            .length,
+                      }"
+                    />
                     <button
                       @click="remove(k)"
                       v-show="k || (!k && inputs.length > 1)"
@@ -96,7 +111,7 @@
                     </button>
 
                     <div
-                      v-for="error in v$.collection.$each.$response.$errors[
+                      v-for="error in v.collection.$each.$response.$errors[
                         index
                       ].name"
                       :key="error"
@@ -116,10 +131,7 @@
                     v-for="(input, k) in inputs2"
                     :key="k"
                   >
-                    <input
-                      type="text"
-                      v-model="input.phonee"
-                    />
+                    <input type="text" v-model="input.phonee" />
 
                     <button
                       @click="remove2(k)"
@@ -178,7 +190,7 @@
                     />
                     <label for="fmale">Female</label><br />
                   </label>
-                  <div v-if="v$.gender.$error" class="error">
+                  <div v-if="v.gender.$error" class="error">
                     gander field has an error.
                   </div>
                 </label>
@@ -190,7 +202,7 @@
                 <p>BirthDate</p>
                 <label>
                   <v-date-picker v-model="date" />
-                  <div v-if="v$.date.$error" class="error">
+                  <div v-if="v.date.$error" class="error">
                     address field has an error.
                   </div>
                 </label>
@@ -230,24 +242,8 @@ import { reactive } from "vue";
 
 export default {
   setup() {
-    const rules = {
-      collection: {
-        $each: helpers.forEach({
-          name: {
-            required,
-          },
-        }),
-      },
-    };
     const state = reactive({
-      collection: [{ name: "" }, { name: "bar" }],
-    });
-    const v = useVuelidate(rules, state);
-    return { v$: useVuelidate(), rules, v };
-  },
-
-  data() {
-    return {
+      addresses: [{ name: "" }, { name: "boo" }],
       fName: "",
       lName: "",
       email: "",
@@ -259,20 +255,16 @@ export default {
       gender: "",
       date: "",
       img: "",
-      inputs: [
-        {
-          addresss: "",
-        },
-      ],
-      inputs2: [
-        {
-          phonee: "",
-        },
-      ],
-    };
-  },
-  validations() {
-    return {
+    });
+
+    const rules = {
+      addresses: {
+        $each: helpers.forEach({
+          name: {
+            required,
+          },
+        }),
+      },
       fName: { required }, // Matches this.firstName
       lName: { required }, // Matches this.lastName,
       gender: { required }, // Matches this.lastName
@@ -282,7 +274,7 @@ export default {
       img: { required },
       confirmPassword: {
         required,
-        sameAsPassword: sameAs(this.password), // can be a reference to a field or computed property
+        sameAsPassword: sameAs(state.password), // can be a reference to a field or computed property
       },
       address: {
         required,
@@ -295,26 +287,14 @@ export default {
       date: {
         required,
       },
-      inputs: {
-        $each: helpers.forEach({
-          addresss: {
-            required,
-          },
-        }),
-      },
-      inputs2: {
-        $each: helpers.forEach({
-          phonee: {
-            required,
-          },
-        }),
-      },
     };
+    const v = useVuelidate(rules, state);
+    return { rules, v };
   },
   methods: {
     async submit() {
-      const result = await this.v$.$validate();
-      if (!this.v$.$error) {
+      const result = await this.v;
+      if (!this.v.$error) {
         console.log("DOne", result);
         this.done = true;
       } else {
