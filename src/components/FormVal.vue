@@ -1,16 +1,20 @@
 <template>
   <section>
+    <div class="row header">
+      <h1>استماره التسجيل</h1>
+      <p>جميع البيانات المطلوبه رئيسيه</p>
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-xl-12">
           <div class="row">
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>First Name</p>
+                <p>الاسم الاول</p>
                 <label>
-                  <input v-model="fName" />
+                  <input v-model="v.fName.$model" />
                   <div v-if="v.fName.$error" class="error">
-                    Name field has an error.
+                    يجب ادخال اسمك الاول
                   </div>
                   <div v-for="error in v.fName.$error" :key="error">
                     ERR- {{ error.$message }}
@@ -20,11 +24,11 @@
             </div>
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>Last Name</p>
+                <p>الاسم الاخير</p>
                 <label>
-                  <input type="text" v-model="lName" />
+                  <input type="text" v-model="v.lName.$model" />
                   <div v-if="v.lName.$error" class="error">
-                    Name field has an error.
+                    يجب ادخال اسمك الاخير
                   </div>
                 </label>
               </div>
@@ -34,22 +38,22 @@
           <div class="row">
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>E-Mail</p>
+                <p>البريد الالكتروني</p>
                 <label>
-                  <input type="text" v-model="email" />
+                  <input type="text" v-model="v.email.$model" />
                   <div v-if="v.email.$error" class="error">
-                    Email field has an error.
+                    البريد الالكتروني خاطيء
                   </div>
                 </label>
               </div>
             </div>
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>National ID</p>
+                <p>الرقم القومي</p>
                 <label>
-                  <input type="text" v-model="na_ID" />
+                  <input type="text" v-model="v.na_ID.$model" />
                   <div v-if="v.na_ID.$error" class="error">
-                    Nationl ID field has an error.
+                    الرقم القومي غير صحيح
                   </div>
                 </label>
               </div>
@@ -59,22 +63,22 @@
           <div class="row">
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>Password</p>
+                <p>الرقم السري</p>
                 <label>
-                  <input type="text" v-model="password" />
-                  <div v-if="v.password.$error" class="error">
-                    password field has an error.
+                  <input type="text" v-model="v.password.password.$model" />
+                  <div v-if="v.password.password.$error" class="error">
+                    يرجي ادخال الرقم السري
                   </div>
                 </label>
               </div>
             </div>
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>Confirm Password</p>
+                <p>تاكيد الرقم السري</p>
                 <label>
-                  <input type="text" v-model="confirmPassword" />
-                  <div v-if="v.confirmPassword.$error" class="error">
-                    confirmPassword field has an error.
+                  <input type="text" v-model="v.password.confirm.$model" />
+                  <div v-if="v.password.confirm.$error" class="error">
+                    يرجي التاكد من الرقم السري
                   </div>
                 </label>
               </div>
@@ -82,65 +86,63 @@
           </div>
 
           <div class="row">
-            <div class="col-xl-6 col-sm-6 col-12">
+            <div class="col-xl-12 col-sm-12 col-12">
               <div class="input_container">
-                <p>Address</p>
+                <p>العنوان</p>
                 <label>
                   <div
                     class="form-group"
-                    v-for="(input, k) in addresses"
-                    :key="k"
+                    v-for="(item, index) in v.addresses.$model"
+                    :key="index"
                   >
-                    <input
-                      v-model="input.name"
-                      type="text"
-                      :class="{
-                        'is-error':
-                          v.addresses.$each.$response.$errors[index].name
-                            .length,
-                      }"
-                    />
+                    <input v-model="item.address" type="text" />
                     <button
-                      @click="remove(k)"
-                      v-show="k || (!k && inputs.length > 1)"
+                      @click="remove(index)"
+                      v-show="
+                        index || (!index && v.addresses.$model.length > 1)
+                      "
+                      class="is-error"
                     >
-                      -
+                      ازاله هذا العنوان
                     </button>
-                    <button @click="add(k)" v-show="k == inputs.length - 1">
-                      +
-                    </button>
-
-                    <div
-                      v-for="error in v.collection.$each.$response.$errors[
-                        index
-                      ].name"
-                      :key="error"
+                    <button
+                      @click="add(index)"
+                      v-show="index === v.addresses.$model.length - 1"
                     >
-                      {{ error.$message }}
-                    </div>
+                      + اضافه عنوان اخر
+                    </button>
                   </div>
                 </label>
               </div>
             </div>
-            <div class="col-xl-6 col-sm-6 col-12">
+          </div>
+          <div class="row">
+            <div class="col-xl-12 col-sm-12 col-12">
               <div class="input_container">
-                <p>Phone Number</p>
+                <p>رقم الهاتف</p>
                 <label>
                   <div
                     class="form-group"
-                    v-for="(input, k) in inputs2"
+                    v-for="(input, k) in v.phones.$model"
                     :key="k"
                   >
-                    <input type="text" v-model="input.phonee" />
+                    <input type="text" v-model="input.phone" />
+                    <div v-for="error in v.phones.$errors " :key="error" class="error">
+                    يرجي ادخال رقم الهاتف
+                    </div> 
 
                     <button
                       @click="remove2(k)"
-                      v-show="k || (!k && inputs2.length > 1)"
+                      v-show="k || (!k && v.phones.$model.length > 1)"
+                      class="is-error"
                     >
-                      -
+                      ازاله هذا الرقم
                     </button>
-                    <button @click="add2(k)" v-show="k == inputs2.length - 1">
-                      +
+                    <button
+                      @click="add2(k)"
+                      v-show="k === v.phones.$model.length - 1"
+                    >
+                      + اضافه رقم اخر
                     </button>
                   </div>
                 </label>
@@ -151,12 +153,12 @@
           <div class="row">
             <div class="col-xl-12 col-sm-12 col-12">
               <div class="input_container">
-                <p>Upload Image</p>
+                <p>اضافه صوره</p>
                 <label>
                   <input
                     type="file"
                     accept=".jpg,.png,.svg"
-                    style="border: none"
+                    class="img_uploader"
                   />
                 </label>
               </div>
@@ -165,8 +167,8 @@
 
           <div class="row">
             <div class="col-xl-6 col-sm-6 col-12">
-              <div class="input_container">
-                <p>Gender</p>
+              <div class="input_container ge">
+                <p>النوع</p>
                 <label style="align-items: flex-start">
                   <label class="gneder">
                     <input
@@ -174,10 +176,10 @@
                       id="male"
                       name="male"
                       value="male"
-                      v-model="gender"
+                      v-model="v.gender.$model"
                       style="width: 20%"
                     />
-                    <label for="male">male</label><br />
+                    <label for="male">ذكر</label><br />
                   </label>
                   <label class="gneder">
                     <input
@@ -185,13 +187,13 @@
                       id="fmale"
                       name="fmale"
                       value="fmale"
-                      v-model="gender"
+                      v-model="v.gender.$model"
                       style="width: 20%"
                     />
-                    <label for="fmale">Female</label><br />
+                    <label for="fmale">مونث</label><br />
                   </label>
                   <div v-if="v.gender.$error" class="error">
-                    gander field has an error.
+                    يرجي اختيار النوع
                   </div>
                 </label>
               </div>
@@ -199,11 +201,28 @@
 
             <div class="col-xl-6 col-sm-6 col-12">
               <div class="input_container">
-                <p>BirthDate</p>
+                <p>تاريخ الميلاد</p>
                 <label>
-                  <v-date-picker v-model="date" />
+                  <div class="dateConatiner">
+                    <input
+                      type="text"
+                      :placeholder="
+                        v.date.$model ? v.date.$model : 'DD/MM/YYYY'
+                      "
+                    />
+                    <img
+                      src="@/assets/Group2528.png"
+                      alt="add"
+                      @click="show()"
+                    />
+                  </div>
+                  <v-date-picker
+                    v-show="visible"
+                    v-model="v.date.$model"
+                    style="width: 100%"
+                  />
                   <div v-if="v.date.$error" class="error">
-                    address field has an error.
+                    تاريخ الميلاد غير صحيح
                   </div>
                 </label>
               </div>
@@ -218,7 +237,7 @@
                 style="margin-top: 50px"
                 @click="submit()"
               >
-                Sumbit
+                تاكيد البيانات
               </button>
             </div>
           </div>
@@ -241,17 +260,24 @@ import {
 import { reactive } from "vue";
 
 export default {
+  data() {
+    return {
+      visible: false,
+    };
+  },
   setup() {
     const state = reactive({
-      addresses: [{ name: "" }, { name: "boo" }],
+      addresses: [{ address: "" }],
+      phones: [{ phone: "" }],
       fName: "",
       lName: "",
       email: "",
       na_ID: "",
-      password: "",
-      confirmPassword: "",
-      address: "",
-      phone: "",
+      password: {
+        password: "",
+        confirm: "",
+      },
+
       gender: "",
       date: "",
       img: "",
@@ -260,7 +286,14 @@ export default {
     const rules = {
       addresses: {
         $each: helpers.forEach({
-          name: {
+          address: {
+            required,
+          },
+        }),
+      },
+      phones: {
+        $each: helpers.forEach({
+          phone: {
             required,
           },
         }),
@@ -270,20 +303,12 @@ export default {
       gender: { required }, // Matches this.lastName
       email: { required, email }, // Matches this.contact.email
       na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
-      password: { required, minLength: minLength(8) },
+      password: {
+        password: { required, minLength: minLength(8) },
+        confirm: { required, sameAsPassword: sameAs(state.password.password) },
+      },
       img: { required },
-      confirmPassword: {
-        required,
-        sameAsPassword: sameAs(state.password), // can be a reference to a field or computed property
-      },
-      address: {
-        required,
-        minLength: minLength(1),
-      },
-      phone: {
-        required,
-        minLength: minLength(1),
-      },
+
       date: {
         required,
       },
@@ -294,6 +319,8 @@ export default {
   methods: {
     async submit() {
       const result = await this.v;
+      this.v.$touch();
+
       if (!this.v.$error) {
         console.log("DOne", result);
         this.done = true;
@@ -303,23 +330,26 @@ export default {
       // perform async actions
     },
     add() {
-      this.inputs.push({
-        name: "",
+      this.v.addresses.$model.push({
+        address: "",
       });
-      console.log(this.inputs);
+      console.log(this.v.addresses.$model);
     },
     add2() {
-      this.inputs2.push({
-        phonee: "",
+      this.v.phones.$model.push({
+        phone: "",
       });
-      console.log(this.inputs2);
+      console.log(this.v.phones.$model);
     },
 
     remove(index) {
-      this.inputs.splice(index, 1);
+      this.v.addresses.$model.splice(index, 1);
     },
     remove2(index) {
-      this.inputs2.splice(index, 1);
+      this.v.phones.$model.splice(index, 1);
+    },
+    show() {
+      this.visible = !this.visible;
     },
   },
 };
@@ -328,22 +358,41 @@ export default {
 <style lang="scss" scoped>
 section {
   background-color: #f8f8f8;
-
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-
+  .header {
+    margin: 0;
+    width: 75%;
+    h1 {
+      text-align: right;
+      padding-top: 50px;
+      font-weight: 600;
+    }
+    p {
+      text-align: right;
+      color: #ababab;
+      margin-bottom: 0px;
+    }
+  }
   .container {
     background-color: white;
     width: 75%;
-    padding: 95px;
+    padding-right: 95px;
+    padding-left: 95px;
+    padding-bottom: 95px;
+    padding-top: 40px;
     border: 1px solid #f8f8f8;
     margin-top: 50px;
     margin-bottom: 50px;
     box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.16);
     .col-xl-12 {
+      .btn {
+        width: 30%;
+        font-size: 22px;
+      }
       .row {
-        margin-top: 10px;
+        margin-top: 40px;
       }
     }
   }
@@ -351,9 +400,27 @@ section {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    .dateConatiner {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ababab;
+      width: 100%;
+
+      input {
+        border: none;
+        outline: none;
+      }
+      img {
+        margin-left: 5px;
+        cursor: pointer;
+      }
+    }
     p {
-      text-align: left;
+      text-align: right;
       color: #ababab;
+      margin-bottom: 0px;
     }
     label {
       display: flex;
@@ -372,46 +439,105 @@ section {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-direction: column;
 
         width: 100%;
         .is-error {
-          background-color: red;
+          border: 1px solid red;
+          color: red;
         }
         input {
-          width: 99%;
-          height: 40px;
-          color: #ababab;
-          border: 1px solid #ababab;
-          .is-error {
-            background-color: red;
-          }
+          display: block;
+          width: 100%;
+          padding: 0.375rem 0.75rem;
+          font-size: 1rem;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #212529;
+          background-color: #fff;
+          background-clip: padding-box;
+          border: 1px solid #ced4da;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          border-radius: 0.25rem;
+          margin-top: 10px;
         }
 
         button {
-          margin-left: 20px;
-          border-radius: 50px;
-          border: none;
-          background-color: #ababab;
-          color: #f8f8f8;
+          border-radius: 1px;
+          border: 1px solid green;
+          background-color: white;
+          color: green;
           padding: 5px;
-          width: 25px;
+          width: 100%;
           height: 25px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
+          font-size: 12px;
+          margin-top: 10px;
         }
       }
 
       input {
-        width: 99%;
-        height: 40px;
-        color: #ababab;
-        border: 1px solid #ababab;
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.25rem;
       }
       .error {
         font-size: 12px;
         color: red;
+      }
+    }
+    .img_uploader {
+      border: none;
+      color: #ababab;
+    }
+  }
+  .ge {
+    width: 100%;
+    flex-direction: row;
+    label {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-evenly;
+      flex-direction: row;
+      width: 100%;
+      input {
+        margin-left: 10px;
+        width: 20%;
+        cursor: pointer;
+        /* height: 35%; */
+        height: 25px;
+        display: block;
+        width: 100%;
+        width: 25p;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        /* border-radius: 28.25rem; */
+        border-radius: 60px;
       }
     }
   }
