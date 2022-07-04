@@ -96,6 +96,13 @@
                     :key="index"
                   >
                     <input v-model="item.address" type="text" />
+                    <div
+                      v-for="error in v.addresses.$errors"
+                      :key="error"
+                      class="error"
+                    >
+                      يرجي ادخال العنوان
+                    </div>
                     <button
                       @click="remove(index)"
                       v-show="
@@ -127,9 +134,13 @@
                     :key="k"
                   >
                     <input type="text" v-model="input.phone" />
-                    <div v-for="error in v.phones.$errors " :key="error" class="error">
-                    يرجي ادخال رقم الهاتف
-                    </div> 
+                    <div
+                      v-for="error in v.phones.$errors"
+                      :key="error"
+                      class="error"
+                    >
+                      يرجي ادخال رقم الهاتف
+                    </div>
 
                     <button
                       @click="remove2(k)"
@@ -166,7 +177,10 @@
           </div>
 
           <div class="row">
-            <div class="col-xl-6 col-sm-6 col-12">
+            <div
+              class="col-xl-6 col-sm-6 col-12"
+              style="align-items: center; display: flex"
+            >
               <div class="input_container ge">
                 <p>النوع</p>
                 <label style="align-items: flex-start">
@@ -178,6 +192,8 @@
                       value="male"
                       v-model="v.gender.$model"
                       style="width: 20%"
+                      :class="gender?'activeinput':''"
+                      @click="showGender()"
                     />
                     <label for="male">ذكر</label><br />
                   </label>
@@ -189,6 +205,8 @@
                       value="fmale"
                       v-model="v.gender.$model"
                       style="width: 20%"
+                      :class="gender2?'activeinput':''"
+                      @click="showGender2()"
                     />
                     <label for="fmale">مونث</label><br />
                   </label>
@@ -233,12 +251,14 @@
             <div class="col-xl-12 col-sm-12 col-12">
               <button
                 type="button"
-                class="btn btn-secondary"
+                :class="done ? 'btn btn-secondary done':'btn btn-secondary'"
                 style="margin-top: 50px"
                 @click="submit()"
               >
-                تاكيد البيانات
+              <span v-if="!done">تاكيد  البيانات</span>
+              <span v-else style="color: green;">تم التاكيد</span>
               </button>
+              
             </div>
           </div>
         </div>
@@ -254,15 +274,18 @@ import {
   email,
   minLength,
   maxLength,
-  sameAs,
+  sameAs, 
   helpers,
 } from "@vuelidate/validators";
-import { reactive } from "vue";
+import { reactive ,computed } from "vue";
 
 export default {
   data() {
     return {
       visible: false,
+      gender:false,
+      gender2:false,
+      done:false
     };
   },
   setup() {
@@ -280,10 +303,12 @@ export default {
 
       gender: "",
       date: "",
-      img: "",
     });
 
-    const rules = {
+
+
+    const rules = computed(()=>{
+      return{
       addresses: {
         $each: helpers.forEach({
           address: {
@@ -295,6 +320,7 @@ export default {
         $each: helpers.forEach({
           phone: {
             required,
+            minLength:minLength(10)
           },
         }),
       },
@@ -305,14 +331,15 @@ export default {
       na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
       password: {
         password: { required, minLength: minLength(8) },
-        confirm: { required, sameAsPassword: sameAs(state.password.password) },
+        confirm: { required,  sameAs: sameAs(state.password.password) },
       },
-      img: { required },
 
       date: {
         required,
       },
     };
+    })
+    
     const v = useVuelidate(rules, state);
     return { rules, v };
   },
@@ -351,6 +378,14 @@ export default {
     show() {
       this.visible = !this.visible;
     },
+    showGender(){
+      this.gender=!this.gender;
+      this.gender2=false
+    },
+    showGender2(){
+      this.gender2=!this.gender2;
+      this.gender=false
+    }
   },
 };
 </script>
@@ -390,6 +425,9 @@ section {
       .btn {
         width: 30%;
         font-size: 22px;
+      }
+      .done{
+        background-color: white;
       }
       .row {
         margin-top: 40px;
@@ -516,6 +554,10 @@ section {
       justify-content: space-evenly;
       flex-direction: row;
       width: 100%;
+      .activeinput{
+        background-color: black;
+
+      }
       input {
         margin-left: 10px;
         width: 20%;
