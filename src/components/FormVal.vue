@@ -254,11 +254,12 @@
                       v-maska="['+2 (###) ##-##-##', '+1 (###) ###-##-##']"
                     />
                     <div
-                      v-for="error in v.phones.$each.$response.$errors[k]
-                        .phone"
+                      v-for="error in v.phones.$each.$response.$errors[k].phone"
                       :key="error"
                       class="error"
-                    >يرجي ادخال رقم الهاتف</div>
+                    >
+                      يرجي ادخال رقم الهاتف
+                    </div>
                     <button
                       @click="remove2(k)"
                       v-show="k || (!k && v.phones.$model.length > 1)"
@@ -365,15 +366,24 @@
           </div>
 
           <div class="row">
-            <div class="col-xl-12 col-sm-12 col-12">
+            <div class="col-xl-6 col-sm-12 col-12">
               <button
                 type="button"
                 :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
-                
                 @click="submit()"
               >
                 <span v-if="!done">تاكيد البيانات</span>
                 <span v-else style="color: green">تم التاكيد</span>
+              </button>
+            </div>
+            <div class="col-xl-6 col-sm-12 col-12">
+              <button
+                type="button"
+                :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
+                @click="reset()"
+              >
+                <span v-if="!done">اعاده البيانات</span>
+                <span v-else style="color: green">تمت الاعاده</span>
               </button>
             </div>
           </div>
@@ -472,8 +482,11 @@ export default {
   },
   methods: {
     submit() {
-      this.v.$touch()
+      this.v.$touch();
       // perform async actions
+    },
+    reset() {
+      this.v.$reset();
     },
     add() {
       this.v.addresses.$model.push({
