@@ -12,12 +12,12 @@
               <div class="input_container">
                 <p>الاسم الاول</p>
                 <label>
-                  <input v-model="v.fName.$model" />
+                  <input
+                    v-model="v.fName.$model"
+                    :class="v.fName.$error ? 'input__error' : ''"
+                  />
                   <div v-if="v.fName.$error" class="error">
                     يجب ادخال اسمك الاول
-                  </div>
-                  <div v-for="error in v.fName.$error" :key="error">
-                    ERR- {{ error.$message }}
                   </div>
                 </label>
               </div>
@@ -26,7 +26,11 @@
               <div class="input_container">
                 <p>الاسم الاخير</p>
                 <label>
-                  <input type="text" v-model="v.lName.$model" />
+                  <input
+                    type="text"
+                    v-model="v.lName.$model"
+                    :class="v.lName.$error ? 'input__error' : ''"
+                  />
                   <div v-if="v.lName.$error" class="error">
                     يجب ادخال اسمك الاخير
                   </div>
@@ -40,7 +44,11 @@
               <div class="input_container">
                 <p>البريد الالكتروني</p>
                 <label>
-                  <input type="text" v-model="v.email.$model" />
+                  <input
+                    type="text"
+                    v-model="v.email.$model"
+                    :class="v.email.$error ? 'input__error' : ''"
+                  />
                   <div v-if="v.email.$error" class="error">
                     البريد الالكتروني خاطيء
                   </div>
@@ -51,7 +59,11 @@
               <div class="input_container">
                 <p>الرقم القومي</p>
                 <label>
-                  <input type="text" v-model="v.na_ID.$model" />
+                  <input
+                    type="text"
+                    v-model="v.na_ID.$model"
+                    :class="v.na_ID.$error ? 'input__error' : ''"
+                  />
                   <div v-if="v.na_ID.$error" class="error">
                     الرقم القومي غير صحيح
                   </div>
@@ -65,7 +77,27 @@
               <div class="input_container">
                 <p>الرقم السري</p>
                 <label>
-                  <input type="text" v-model="v.password.password.$model" />
+                  <div
+                    class="dateConatiner"
+                    :class="v.password.password.$error ? 'input__error' : ''"
+                  >
+                    <input
+                      :type="passVislible ? 'text' : 'password'"
+                      v-model="v.password.password.$model"
+                    />
+
+                    <img
+                      src="@/assets/eye.svg"
+                      alt="add"
+                      @click="
+                        () => {
+                          passVislible = !passVislible;
+                        }
+                      "
+                      class="eyeIcon"
+                    />
+                  </div>
+
                   <div v-if="v.password.password.$error" class="error">
                     يرجي ادخال الرقم السري
                   </div>
@@ -76,7 +108,26 @@
               <div class="input_container">
                 <p>تاكيد الرقم السري</p>
                 <label>
-                  <input type="text" v-model="v.password.confirm.$model" />
+                  <div
+                    class="dateConatiner"
+                    :class="v.password.confirm.$error ? 'input__error' : ''"
+                  >
+                    <input
+                      :type="ConfirmpassVislible ? 'text' : 'password'"
+                      v-model="v.password.confirm.$model"
+                    />
+                    <img
+                      src="@/assets/eye.svg"
+                      alt="add"
+                      @click="
+                        () => {
+                          ConfirmpassVislible = !ConfirmpassVislible;
+                        }
+                      "
+                      class="eyeIcon"
+                    />
+                  </div>
+
                   <div v-if="v.password.confirm.$error" class="error">
                     يرجي التاكد من الرقم السري
                   </div>
@@ -95,14 +146,76 @@
                     v-for="(item, index) in v.addresses.$model"
                     :key="index"
                   >
-                    <input v-model="item.address" type="text" />
-                    <div
-                      v-for="error in v.addresses.$errors"
-                      :key="error"
-                      class="error"
-                    >
-                      يرجي ادخال العنوان
+                    <div class="row addresses">
+                      <div class="col-xl-6 col-sm-12 col-12">
+                        <input
+                          v-model="item.country"
+                          type="text"
+                          placeholder="ادخل اسم البلد"
+                        />
+                        <div
+                          v-for="error in v.addresses.$each.$response.$errors[
+                            index
+                          ].country"
+                          :key="error"
+                          class="error-msg"
+                        >
+                          يرجي ادخال البلد
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-sm-12 col-12">
+                        <input
+                          v-model="item.gov"
+                          type="text"
+                          placeholder="ادخل اسم المحافظه"
+                        />
+                        <div
+                          v-for="error in v.addresses.$each.$response.$errors[
+                            index
+                          ].gov"
+                          :key="error"
+                          class="error-msg"
+                        >
+                          يرجي ادخال المحافظه
+                        </div>
+                      </div>
                     </div>
+
+                    <div class="row addresses">
+                      <div class="col-xl-6 col-sm-12 col-12">
+                        <input
+                          v-model="item.flat"
+                          type="text"
+                          placeholder="ادخل رقم الشقه"
+                        />
+                        <div
+                          v-for="error in v.addresses.$each.$response.$errors[
+                            index
+                          ].flat"
+                          :key="error"
+                          class="error-msg"
+                        >
+                          يرجي ادخال رقم الشقه
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-sm-12 col-12">
+                        <input
+                          v-model="item.st"
+                          type="text"
+                          placeholder="ادخل اسم الشارع"
+                        />
+                        <div
+                          v-for="error in v.addresses.$each.$response.$errors[
+                            index
+                          ].st"
+                          :key="error"
+                          class="error-msg"
+                        >
+                          يرجي ادخال اسم الشارع
+                        </div>
+                      </div>
+                    </div>
+
                     <button
                       @click="remove(index)"
                       v-show="
@@ -110,7 +223,7 @@
                       "
                       class="is-error"
                     >
-                      ازاله هذا العنوان
+                      - ازاله هذا العنوان
                     </button>
                     <button
                       @click="add(index)"
@@ -133,15 +246,19 @@
                     v-for="(input, k) in v.phones.$model"
                     :key="k"
                   >
-                    <input type="text" v-model="input.phone" />
+                    <input
+                      type="text"
+                      v-model="input.phone"
+                      id="phone"
+                      placeholder="(....123456789)(+02)"
+                      v-maska="['+2 (###) ##-##-##', '+1 (###) ###-##-##']"
+                    />
                     <div
-                      v-for="error in v.phones.$errors"
+                      v-for="error in v.phones.$each.$response.$errors[k]
+                        .phone"
                       :key="error"
                       class="error"
-                    >
-                      يرجي ادخال رقم الهاتف
-                    </div>
-
+                    >يرجي ادخال رقم الهاتف</div>
                     <button
                       @click="remove2(k)"
                       v-show="k || (!k && v.phones.$model.length > 1)"
@@ -192,8 +309,8 @@
                       value="male"
                       v-model="v.gender.$model"
                       style="width: 20%"
-                      :class="gender?'activeinput':''"
-                      @click="showGender()"
+                      :class="gender ? 'activeinput' : ''"
+                      @click="showGender(1)"
                     />
                     <label for="male">ذكر</label><br />
                   </label>
@@ -205,8 +322,8 @@
                       value="fmale"
                       v-model="v.gender.$model"
                       style="width: 20%"
-                      :class="gender2?'activeinput':''"
-                      @click="showGender2()"
+                      :class="gender2 ? 'activeinput' : ''"
+                      @click="showGender(2)"
                     />
                     <label for="fmale">مونث</label><br />
                   </label>
@@ -227,17 +344,19 @@
                       :placeholder="
                         v.date.$model ? v.date.$model : 'DD/MM/YYYY'
                       "
+                      v-maska="'##/##/####'"
                     />
                     <img
                       src="@/assets/Group2528.png"
                       alt="add"
-                      @click="show()"
+                      @click="show(1)"
                     />
                   </div>
                   <v-date-picker
                     v-show="visible"
                     v-model="v.date.$model"
                     style="width: 100%"
+                    @click="show(2)"
                   />
                   <div v-if="v.date.$error" class="error">
                     تاريخ الميلاد غير صحيح
@@ -251,14 +370,13 @@
             <div class="col-xl-12 col-sm-12 col-12">
               <button
                 type="button"
-                :class="done ? 'btn btn-secondary done':'btn btn-secondary'"
+                :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
                 style="margin-top: 50px"
                 @click="submit()"
               >
-              <span v-if="!done">تاكيد  البيانات</span>
-              <span v-else style="color: green;">تم التاكيد</span>
+                <span v-if="!done">تاكيد البيانات</span>
+                <span v-else style="color: green">تم التاكيد</span>
               </button>
-              
             </div>
           </div>
         </div>
@@ -274,23 +392,27 @@ import {
   email,
   minLength,
   maxLength,
-  sameAs, 
+  sameAs,
   helpers,
 } from "@vuelidate/validators";
-import { reactive ,computed } from "vue";
+import { reactive, computed } from "vue";
+import { maska } from "maska";
 
 export default {
+  directives: { maska },
   data() {
     return {
       visible: false,
-      gender:false,
-      gender2:false,
-      done:false
+      gender: false,
+      gender2: false,
+      done: false,
+      passVislible: false,
+      ConfirmpassVislible: false,
     };
   },
   setup() {
     const state = reactive({
-      addresses: [{ address: "" }],
+      addresses: [{ country: "", flat: "", gov: "", st: "" }],
       phones: [{ phone: "" }],
       fName: "",
       lName: "",
@@ -305,68 +427,69 @@ export default {
       date: "",
     });
 
+    const rules = computed(() => {
+      return {
+        addresses: {
+          $each: helpers.forEach({
+            country: {
+              required,
+            },
+            flat: {
+              required,
+            },
+            gov: {
+              required,
+            },
+            st: {
+              required,
+            },
+          }),
+        },
+        phones: {
+          $each: helpers.forEach({
+            phone: {
+              required,
+              minLength: minLength(10),
+            },
+          }),
+        },
+        fName: { required }, // Matches this.firstName
+        lName: { required }, // Matches this.lastName,
+        gender: { required }, // Matches this.lastName
+        email: { required, email }, // Matches this.contact.email
+        na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
+        password: {
+          password: { required, minLength: minLength(8) },
+          confirm: { required, sameAs: sameAs(state.password.password) },
+        },
 
+        date: {
+          required,
+        },
+      };
+    });
 
-    const rules = computed(()=>{
-      return{
-      addresses: {
-        $each: helpers.forEach({
-          address: {
-            required,
-          },
-        }),
-      },
-      phones: {
-        $each: helpers.forEach({
-          phone: {
-            required,
-            minLength:minLength(10)
-          },
-        }),
-      },
-      fName: { required }, // Matches this.firstName
-      lName: { required }, // Matches this.lastName,
-      gender: { required }, // Matches this.lastName
-      email: { required, email }, // Matches this.contact.email
-      na_ID: { required, minLength: minLength(14), maxLength: maxLength(14) },
-      password: {
-        password: { required, minLength: minLength(8) },
-        confirm: { required,  sameAs: sameAs(state.password.password) },
-      },
-
-      date: {
-        required,
-      },
-    };
-    })
-    
     const v = useVuelidate(rules, state);
     return { rules, v };
   },
   methods: {
-    async submit() {
-      const result = await this.v;
-      this.v.$touch();
-
-      if (!this.v.$error) {
-        console.log("DOne", result);
-        this.done = true;
-      } else {
-        console.log("error");
-      }
+    submit() {
+      this.v.$reset()
+      this.v.$touch()
       // perform async actions
     },
     add() {
       this.v.addresses.$model.push({
-        address: "",
+        country: "",
+        flat: "",
+        gov: "",
+        st: "",
       });
-      console.log(this.v.addresses.$model);
     },
     add2() {
       this.v.phones.$model.push({
         phone: "",
       });
-      console.log(this.v.phones.$model);
     },
 
     remove(index) {
@@ -375,17 +498,22 @@ export default {
     remove2(index) {
       this.v.phones.$model.splice(index, 1);
     },
-    show() {
-      this.visible = !this.visible;
+    show(x) {
+      if (x === 1) {
+        this.visible = true;
+      } else if (x === 2) {
+        this.visible = false;
+      }
     },
-    showGender(){
-      this.gender=!this.gender;
-      this.gender2=false
+    showGender(x) {
+      if (x === 1) {
+        this.gender = !this.gender;
+        this.gender2 = false;
+      } else if (x === 2) {
+        this.gender2 = !this.gender2;
+        this.gender = false;
+      }
     },
-    showGender2(){
-      this.gender2=!this.gender2;
-      this.gender=false
-    }
   },
 };
 </script>
@@ -426,7 +554,7 @@ section {
         width: 30%;
         font-size: 22px;
       }
-      .done{
+      .done {
         background-color: white;
       }
       .row {
@@ -445,6 +573,8 @@ section {
       justify-content: center;
       border: 1px solid #ababab;
       width: 100%;
+      border-radius: 0.25rem;
+      height: fit-content;
 
       input {
         border: none;
@@ -453,6 +583,9 @@ section {
       img {
         margin-left: 5px;
         cursor: pointer;
+      }
+      .eyeIcon {
+        width: 15px;
       }
     }
     p {
@@ -478,8 +611,22 @@ section {
         align-items: center;
         justify-content: space-between;
         flex-direction: column;
-
         width: 100%;
+        .row {
+          margin-top: 0;
+        }
+        .addresses {
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+
+          .error {
+            border: 1px solid red;
+          }
+          .error-msg {
+            color: red;
+          }
+        }
         .is-error {
           border: 1px solid red;
           color: red;
@@ -539,6 +686,9 @@ section {
         font-size: 12px;
         color: red;
       }
+      .input__error {
+        border: 1px solid red;
+      }
     }
     .img_uploader {
       border: none;
@@ -554,9 +704,8 @@ section {
       justify-content: space-evenly;
       flex-direction: row;
       width: 100%;
-      .activeinput{
+      .activeinput {
         background-color: black;
-
       }
       input {
         margin-left: 10px;
