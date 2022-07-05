@@ -308,7 +308,6 @@
                       name="male"
                       value="male"
                       v-model="v.gender.$model"
-                      style="width: 20%"
                       :class="gender ? 'activeinput' : ''"
                       @click="showGender(1)"
                     />
@@ -321,7 +320,6 @@
                       name="fmale"
                       value="fmale"
                       v-model="v.gender.$model"
-                      style="width: 20%"
                       :class="gender2 ? 'activeinput' : ''"
                       @click="showGender(2)"
                     />
@@ -371,7 +369,7 @@
               <button
                 type="button"
                 :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
-                style="margin-top: 50px"
+                
                 @click="submit()"
               >
                 <span v-if="!done">تاكيد البيانات</span>
@@ -474,7 +472,6 @@ export default {
   },
   methods: {
     submit() {
-      this.v.$reset()
       this.v.$touch()
       // perform async actions
     },
@@ -553,6 +550,7 @@ section {
       .btn {
         width: 30%;
         font-size: 22px;
+        margin-top: 50px;
       }
       .done {
         background-color: white;
@@ -605,6 +603,10 @@ section {
         justify-content: flex-start;
         align-items: center;
         width: 33%;
+
+        input{
+          width: 20%;
+        }
       }
       .form-group {
         display: flex;
