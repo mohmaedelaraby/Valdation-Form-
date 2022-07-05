@@ -379,10 +379,10 @@
             <div class="col-xl-6 col-sm-12 col-12">
               <button
                 type="button"
-                :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
+                :class="resetV ? 'btn btn-secondary done' : 'btn btn-secondary'"
                 @click="reset()"
               >
-                <span v-if="!done">اعاده البيانات</span>
+                <span v-if="!resetV">اعاده البيانات</span>
                 <span v-else style="color: green">تمت الاعاده</span>
               </button>
             </div>
@@ -405,6 +405,7 @@ import {
 } from "@vuelidate/validators";
 import { reactive, computed } from "vue";
 import { maska } from "maska";
+import { flip } from '@popperjs/core';
 
 export default {
   directives: { maska },
@@ -416,6 +417,8 @@ export default {
       done: false,
       passVislible: false,
       ConfirmpassVislible: false,
+      resetV:false,
+
     };
   },
   setup() {
@@ -483,10 +486,14 @@ export default {
   methods: {
     submit() {
       this.v.$touch();
+      this.done=true;
+      this.resetV=false
       // perform async actions
     },
     reset() {
       this.v.$reset();
+      this.resetV=true;
+      this.done=false
     },
     add() {
       this.v.addresses.$model.push({
