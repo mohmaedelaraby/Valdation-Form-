@@ -152,6 +152,7 @@
                           v-model="item.country"
                           type="text"
                           placeholder="ادخل اسم البلد"
+                      
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -160,7 +161,9 @@
                           :key="error"
                           class="error-msg"
                         >
-                          يرجي ادخال البلد
+                          <div v-if="v.addresses.$error">
+                            يرجي ادخال رقم البلد
+                          </div>
                         </div>
                       </div>
                       <div class="col-xl-6 col-sm-12 col-12">
@@ -168,6 +171,7 @@
                           v-model="item.gov"
                           type="text"
                           placeholder="ادخل اسم المحافظه"
+                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -176,7 +180,9 @@
                           :key="error"
                           class="error-msg"
                         >
-                          يرجي ادخال المحافظه
+                          <div v-if="v.addresses.$error">
+                            يرجي ادخال المحافظه
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -187,6 +193,7 @@
                           v-model="item.flat"
                           type="text"
                           placeholder="ادخل رقم الشقه"
+                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -195,7 +202,9 @@
                           :key="error"
                           class="error-msg"
                         >
-                          يرجي ادخال رقم الشقه
+                          <div v-if="v.addresses.$error">
+                            يرجي ادخال رقم الشقه
+                          </div>
                         </div>
                       </div>
                       <div class="col-xl-6 col-sm-12 col-12">
@@ -203,6 +212,8 @@
                           v-model="item.st"
                           type="text"
                           placeholder="ادخل اسم الشارع"
+                         
+                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -211,13 +222,15 @@
                           :key="error"
                           class="error-msg"
                         >
-                          يرجي ادخال اسم الشارع
+                          <div v-if="v.addresses.$error">
+                            يرجي ادخال رقم الشارع
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     <button
-                      @click="remove(index)"
+                      @click="remove(index, 1)"
                       v-show="
                         index || (!index && v.addresses.$model.length > 1)
                       "
@@ -226,7 +239,7 @@
                       - ازاله هذا العنوان
                     </button>
                     <button
-                      @click="add(index)"
+                      @click="add(1)"
                       v-show="index === v.addresses.$model.length - 1"
                     >
                       + اضافه عنوان اخر
@@ -252,23 +265,24 @@
                       id="phone"
                       placeholder="(....123456789)(+02)"
                       v-maska="['+2 (###) ##-##-##', '+1 (###) ###-##-##']"
+                      :class="v.phones.$error? 'error':''"
                     />
                     <div
                       v-for="error in v.phones.$each.$response.$errors[k].phone"
                       :key="error"
                       class="error"
                     >
-                      يرجي ادخال رقم الهاتف
+                      <div v-if="v.phones.$error">يرجي ادخال رقم الهاتف</div>
                     </div>
                     <button
-                      @click="remove2(k)"
+                      @click="remove(k, 2)"
                       v-show="k || (!k && v.phones.$model.length > 1)"
                       class="is-error"
                     >
                       ازاله هذا الرقم
                     </button>
                     <button
-                      @click="add2(k)"
+                      @click="add(2)"
                       v-show="k === v.phones.$model.length - 1"
                     >
                       + اضافه رقم اخر
@@ -286,7 +300,7 @@
                 <label>
                   <input
                     type="file"
-                    accept=".jpg,.png,.svg"
+                   accept="image/png, image/jpg, image/jpeg"
                     class="img_uploader"
                   />
                 </label>
@@ -357,6 +371,8 @@
                     style="width: 100%"
                     @click="show(2)"
                   />
+
+                  
                   <div v-if="v.date.$error" class="error">
                     تاريخ الميلاد غير صحيح
                   </div>
@@ -405,7 +421,6 @@ import {
 } from "@vuelidate/validators";
 import { reactive, computed } from "vue";
 import { maska } from "maska";
-import { flip } from '@popperjs/core';
 
 export default {
   directives: { maska },
@@ -417,8 +432,7 @@ export default {
       done: false,
       passVislible: false,
       ConfirmpassVislible: false,
-      resetV:false,
-
+      resetV: false,
     };
   },
   setup() {
@@ -433,9 +447,8 @@ export default {
         password: "",
         confirm: "",
       },
-
       gender: "",
-      date: "",
+      date: new Date().toISOString().split("T")[0],
     });
 
     const rules = computed(() => {
@@ -460,7 +473,7 @@ export default {
           $each: helpers.forEach({
             phone: {
               required,
-              minLength: minLength(10),
+              minLength: minLength(11),
             },
           }),
         },
@@ -486,34 +499,50 @@ export default {
   methods: {
     submit() {
       this.v.$touch();
-      this.done=true;
-      this.resetV=false
+      if (this.v.$errors.length > 0) {
+        console.log("error", this.v.$errors.length);
+      } else {
+        this.done = true;
+        this.resetV = false;
+      }
+
       // perform async actions
     },
     reset() {
       this.v.$reset();
-      this.resetV=true;
-      this.done=false
+      this.v.fName="",
+      this.v.lName="",
+      this.v.na_ID="",
+      this.v.password.password="",
+      this.v.password.confirm="",
+      this.v.email=""
+      this.v.gender="",
+      this.gender=false;
+      this.gender2=false;
+      this.resetV = true;
+      this.done = false;
     },
-    add() {
-      this.v.addresses.$model.push({
-        country: "",
-        flat: "",
-        gov: "",
-        st: "",
-      });
-    },
-    add2() {
-      this.v.phones.$model.push({
-        phone: "",
-      });
+    add(num) {
+      if (num === 1) {
+        this.v.addresses.$model.push({
+          country: "",
+          flat: "",
+          gov: "",
+          st: "",
+        });
+      } else if (num === 2) {
+        this.v.phones.$model.push({
+          phone: "",
+        });
+      }
     },
 
-    remove(index) {
-      this.v.addresses.$model.splice(index, 1);
-    },
-    remove2(index) {
-      this.v.phones.$model.splice(index, 1);
+    remove(index, num) {
+      if (num === 1) {
+        this.v.addresses.$model.splice(index, 1);
+      } else if (num === 2) {
+        this.v.phones.$model.splice(index, 1);
+      }
     },
     show(x) {
       if (x === 1) {
