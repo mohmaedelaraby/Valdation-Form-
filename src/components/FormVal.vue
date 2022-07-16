@@ -48,6 +48,7 @@
                     type="text"
                     v-model="v.email.$model"
                     :class="v.email.$error ? 'input__error' : ''"
+                    :disabled="disable"
                   />
                   <div v-if="v.email.$error" class="error">
                     البريد الالكتروني خاطيء
@@ -63,6 +64,7 @@
                     type="text"
                     v-model="v.na_ID.$model"
                     :class="v.na_ID.$error ? 'input__error' : ''"
+                    :disabled="disable"
                   />
                   <div v-if="v.na_ID.$error" class="error">
                     الرقم القومي غير صحيح
@@ -355,9 +357,10 @@
                     <input
                       type="text"
                       :placeholder="
-                        v.date.$model ? v.date.$model : 'DD/MM/YYYY'
+                        v.date.$model ? v.date.$model.toISOString().slice(0, 10) : 'DD/MM/YYYY'
                       "
                       v-maska="'##/##/####'"
+                      disabled="true"
                     />
                     <img
                       src="@/assets/Group2528.png"
@@ -392,7 +395,7 @@
                 <span v-else style="color: green">تم التاكيد</span>
               </button>
             </div>
-            <div class="col-xl-6 col-sm-12 col-12">
+            <div class="col-xl-6 col-sm-12 col-12" v-show="done">
               <button
                 type="button"
                 :class="resetV ? 'btn btn-secondary done' : 'btn btn-secondary'"
@@ -400,6 +403,15 @@
               >
                 <span v-if="!resetV">اعاده البيانات</span>
                 <span v-else style="color: green">تمت الاعاده</span>
+              </button>
+
+                <button
+                type="button"
+                :class="editV ? 'btn btn-secondary done' : 'btn btn-secondary'"
+                @click="edit()"
+              >
+                <span v-if="!editV">تعديل البيانات</span>
+                <span v-else style="color: green">تم التعديل</span>
               </button>
             </div>
           </div>
@@ -433,6 +445,8 @@ export default {
       passVislible: false,
       ConfirmpassVislible: false,
       resetV: false,
+      editV:false,
+      disable:false
     };
   },
   setup() {
@@ -448,7 +462,7 @@ export default {
         confirm: "",
       },
       gender: "",
-      date: new Date().toISOString().split("T")[0],
+      date: "",
     });
 
     const rules = computed(() => {
@@ -520,7 +534,12 @@ export default {
       this.gender=false;
       this.gender2=false;
       this.resetV = true;
+      this.editV=false;
       this.done = false;
+    },
+    edit(){
+      this.editV=true
+      this.disable=true
     },
     add(num) {
       if (num === 1) {
