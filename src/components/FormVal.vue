@@ -154,7 +154,6 @@
                           v-model="item.country"
                           type="text"
                           placeholder="ادخل اسم البلد"
-                      
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -173,7 +172,6 @@
                           v-model="item.gov"
                           type="text"
                           placeholder="ادخل اسم المحافظه"
-                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -195,7 +193,6 @@
                           v-model="item.flat"
                           type="text"
                           placeholder="ادخل رقم الشقه"
-                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -214,8 +211,6 @@
                           v-model="item.st"
                           type="text"
                           placeholder="ادخل اسم الشارع"
-                         
-                          
                         />
                         <div
                           v-for="error in v.addresses.$each.$response.$errors[
@@ -267,7 +262,7 @@
                       id="phone"
                       placeholder="(....123456789)(+02)"
                       v-maska="['+2 (###) ##-##-##', '+1 (###) ###-##-##']"
-                      :class="v.phones.$error? 'error':''"
+                      :class="v.phones.$error ? 'error' : ''"
                     />
                     <div
                       v-for="error in v.phones.$each.$response.$errors[k].phone"
@@ -302,7 +297,7 @@
                 <label>
                   <input
                     type="file"
-                   accept="image/png, image/jpg, image/jpeg"
+                    accept="image/png, image/jpg, image/jpeg"
                     class="img_uploader"
                   />
                 </label>
@@ -357,7 +352,9 @@
                     <input
                       type="text"
                       :placeholder="
-                        v.date.$model ? v.date.$model.toISOString().slice(0, 10) : 'DD/MM/YYYY'
+                        v.date.$model
+                          ? v.date.$model.toISOString().slice(0, 10)
+                          : 'DD/MM/YYYY'
                       "
                       v-maska="'##/##/####'"
                       disabled="true"
@@ -375,7 +372,6 @@
                     @click="show(2)"
                   />
 
-                  
                   <div v-if="v.date.$error" class="error">
                     تاريخ الميلاد غير صحيح
                   </div>
@@ -391,7 +387,7 @@
                 :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
                 @click="submit()"
               >
-                <span v-if="!done">تاكيد البيانات</span>
+                <span v-if="done === false">تاكيد البيانات</span>
                 <span v-else style="color: green">تم التاكيد</span>
               </button>
             </div>
@@ -405,7 +401,7 @@
                 <span v-else style="color: green">تمت الاعاده</span>
               </button>
 
-                <button
+              <button
                 type="button"
                 :class="editV ? 'btn btn-secondary done' : 'btn btn-secondary'"
                 @click="edit()"
@@ -445,8 +441,8 @@ export default {
       passVislible: false,
       ConfirmpassVislible: false,
       resetV: false,
-      editV:false,
-      disable:false
+      editV: false,
+      disable: false,
     };
   },
   setup() {
@@ -517,6 +513,7 @@ export default {
         console.log("error", this.v.$errors.length);
       } else {
         this.done = true;
+        console.log("Done", this.done);
         this.resetV = false;
       }
 
@@ -524,22 +521,25 @@ export default {
     },
     reset() {
       this.v.$reset();
-      this.v.fName="",
-      this.v.lName="",
-      this.v.na_ID="",
-      this.v.password.password="",
-      this.v.password.confirm="",
-      this.v.email=""
-      this.v.gender="",
-      this.gender=false;
-      this.gender2=false;
+      (this.done = false), console.log("Done", this.done);
+      (this.v.fName = ""),
+        (this.v.lName = ""),
+        (this.v.na_ID = ""),
+        (this.v.phones.$model = [{ phone: "" }]),
+        (this.v.addresses.$model = [
+          { country: "", flat: "", gov: "", st: "" },
+        ]),
+        (this.v.password.password = ""),
+        (this.v.password.confirm = ""),
+        (this.v.email = "");
+      (this.v.gender = ""), (this.gender = false);
+      this.gender2 = false;
       this.resetV = true;
-      this.editV=false;
-      this.done = false;
+      this.editV = false;
     },
-    edit(){
-      this.editV=true
-      this.disable=true
+    edit() {
+      this.editV = true;
+      this.disable = true;
     },
     add(num) {
       if (num === 1) {
