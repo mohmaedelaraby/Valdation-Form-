@@ -377,10 +377,10 @@
               <div class="col-xl-6 col-sm-12 col-12">
                 <button
                   type="button"
-                  :class="done ? 'btn btn-secondary done' : 'btn btn-secondary'"
+                  :class="donetxt ? 'btn btn-secondary done' : 'btn btn-secondary'"
                   @click="submit()"
                 >
-                  <span v-if="done === false">تاكيد البيانات</span>
+                  <span v-if="donetxt === false">تاكيد البيانات</span>
                   <span v-else class="confirmed">تم التاكيد</span>
                 </button>
               </div>
@@ -442,6 +442,7 @@ export default {
       editV: false,
       disable: false,
       passShow: true,
+      donetxt:false
     };
   },
   setup() {
@@ -511,7 +512,13 @@ export default {
       if (this.v.$errors.length > 0) {
         console.log("error", this.v.$errors.length);
       } else {
+
         this.done = true;
+        this.donetxt=true;
+         setTimeout(()=>{
+          this.donetxt=false
+          console.log("2sec")
+         }, 3000);
         this.editV=false;
         this.resetV=false;
         console.log("Done", this.done);
@@ -541,6 +548,7 @@ export default {
       this.gender2=false;
       this.editV = false;
       this.resetV=true;
+      
     },
     edit() {
       this.v.phones.$model = [{ phone: "" }];
@@ -551,13 +559,13 @@ export default {
       this.v.password.confirm = "";
       this.v.email.$model = "";
       this.v.fName.$model = "";
-      
       this.v.lName.$model = "";
       this.v.gender.$model = "";
       this.gender = false;
       this.editV = true;
       this.disable = true;
       this.done = false;
+      this.donetxt=false;
       this.passShow = false;
       this.gender2=false;
     },
