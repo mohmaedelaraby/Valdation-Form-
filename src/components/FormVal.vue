@@ -351,18 +351,19 @@
                         "
                         v-maska="'##/##/####'"
                         :disabled="disable"
+                        @click="disable? '': show()"
                       />
                       <img
                         src="@/assets/Group2528.png"
                         alt="add"
-                        @click="disable? '': show(1)"
+                        
                       />
                     </div>
                     <v-date-picker
-                      v-show="visible"
+                      v-if="visible"
                       v-model="v.date.$model"
                       class="dateWidth"
-                      @click="show(2)"
+                      @click="show()"
                     />
 
                     <div v-if="v.date.$error" class="error">
@@ -582,14 +583,9 @@ export default {
         this.v.phones.$model.splice(index, 1);
       }
     },
-    show(x) {
-      if (x === 1) {
-        this.visible = true;
-        console.log("visible", this.visible);
-      } else if (x === 2) {
-        this.visible = false;
-        console.log("visible", this.visible);
-      }
+    show() {
+     this.visible = !this.visible
+     console.log("Visible",this.visible)
     },
     showGender(x) {
       if (x === 1) {
