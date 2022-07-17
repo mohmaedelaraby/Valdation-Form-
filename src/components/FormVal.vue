@@ -224,7 +224,7 @@
                       </div>
 
                       <button
-                        @click="remove(index, 1)"
+                        @click.prevent="remove(index, 'addresses')"
                         v-show="
                           index || (!index && v.addresses.$model.length > 1)
                         "
@@ -233,7 +233,7 @@
                         - ازاله هذا العنوان
                       </button>
                       <button
-                        @click="add(1)"
+                        @click.prevent="add('addresses', v1)"
                         v-show="index === v.addresses.$model.length - 1"
                       >
                         + اضافه عنوان اخر
@@ -270,14 +270,14 @@
                         <div v-if="v.phones.$error">يرجي ادخال رقم الهاتف</div>
                       </div>
                       <button
-                        @click="remove(k, 2)"
+                        @click.prevent="remove(k, 'phones')"
                         v-show="k || (!k && v.phones.$model.length > 1)"
                         class="is-error"
                       >
                         ازاله هذا الرقم
                       </button>
                       <button
-                        @click="add(2)"
+                        @click.prevent="add('phones', v2)"
                         v-show="k === v.phones.$model.length - 1"
                       >
                         + اضافه رقم اخر
@@ -314,7 +314,7 @@
                         value="male"
                         v-model="v.gender.$model"
                         :class="gender ? 'activeinput' : ''"
-                        @click="showGender(1)"
+                        @click="showGender('gender', 'gender2')"
                       />
                       <label for="male">ذكر</label><br />
                     </label>
@@ -326,7 +326,7 @@
                         value="fmale"
                         v-model="v.gender.$model"
                         :class="gender2 ? 'activeinput' : ''"
-                        @click="showGender(2)"
+                        @click="showGender('gender2', 'gender')"
                       />
                       <label for="fmale">مونث</label><br />
                     </label>
@@ -351,13 +351,9 @@
                         "
                         v-maska="'##/##/####'"
                         :disabled="disable"
-                        @click="disable? '': show()"
+                        @click="disable ? '' : show()"
                       />
-                      <img
-                        src="@/assets/Group2528.png"
-                        alt="add"
-                        
-                      />
+                      <img src="@/assets/Group2528.png" alt="add" />
                     </div>
                     <v-date-picker
                       v-if="visible"
@@ -377,7 +373,9 @@
               <div class="col-xl-6 col-sm-12 col-12">
                 <button
                   type="button"
-                  :class="donetxt ? 'btn btn-secondary done' : 'btn btn-secondary'"
+                  :class="
+                    donetxt ? 'btn btn-secondary done' : 'btn btn-secondary'
+                  "
                   @click="submit()"
                 >
                   <span v-if="donetxt === false">تاكيد البيانات</span>
@@ -442,7 +440,14 @@ export default {
       editV: false,
       disable: false,
       passShow: true,
-      donetxt:false
+      donetxt: false,
+      v1: {
+        country: "",
+        flat: "",
+        gov: "",
+        st: "",
+      },
+      v2: { phone: "" },
     };
   },
   setup() {
@@ -512,15 +517,14 @@ export default {
       if (this.v.$errors.length > 0) {
         console.log("error", this.v.$errors.length);
       } else {
-
         this.done = true;
-        this.donetxt=true;
-         setTimeout(()=>{
-          this.donetxt=false
-          console.log("2sec")
-         }, 3000);
-        this.editV=false;
-        this.resetV=false;
+        this.donetxt = true;
+        setTimeout(() => {
+          this.donetxt = false;
+          console.log("2sec");
+        }, 3000);
+        this.editV = false;
+        this.resetV = false;
         console.log("Done", this.done);
         this.passShow = true;
       }
@@ -530,31 +534,30 @@ export default {
     reset() {
       this.v.$reset();
       this.v.phones.$model = [{ phone: "" }];
-      this.v.phones.$reset
+      this.v.phones.$reset;
       this.v.addresses.$model = [{ country: "", flat: "", gov: "", st: "" }];
-      this.v.addresses.$reset
+      this.v.addresses.$reset;
       this.v.password.password = "";
       this.v.password.confirm = "";
       this.v.email.$model = "";
       this.v.fName.$model = "";
-      this.v.na_ID.$model="";
-      this.v.date.$model="";
+      this.v.na_ID.$model = "";
+      this.v.date.$model = "";
       this.v.lName.$model = "";
       this.v.gender.$model = "";
       this.gender = false;
       this.editV = true;
       this.done = false;
       this.passShow = false;
-      this.gender2=false;
+      this.gender2 = false;
       this.editV = false;
-      this.resetV=true;
-      
+      this.resetV = true;
     },
     edit() {
       this.v.phones.$model = [{ phone: "" }];
-      this.v.phones.$reset
+      this.v.phones.$reset;
       this.v.addresses.$model = [{ country: "", flat: "", gov: "", st: "" }];
-      this.v.addresses.$reset
+      this.v.addresses.$reset;
       this.v.password.password = "";
       this.v.password.confirm = "";
       this.v.email.$model = "";
@@ -565,44 +568,24 @@ export default {
       this.editV = true;
       this.disable = true;
       this.done = false;
-      this.donetxt=false;
+      this.donetxt = false;
       this.passShow = false;
-      this.gender2=false;
+      this.gender2 = false;
     },
-    add(num) {
-      if (num === 1) {
-        this.v.addresses.$model.push({
-          country: "",
-          flat: "",
-          gov: "",
-          st: "",
-        });
-      } else if (num === 2) {
-        this.v.phones.$model.push({
-          phone: "",
-        });
-      }
+    add(key, value) {
+      this.v[key].$model.push(value);
     },
 
-    remove(index, num) {
-      if (num === 1) {
-        this.v.addresses.$model.splice(index, 1);
-      } else if (num === 2) {
-        this.v.phones.$model.splice(index, 1);
-      }
+    remove(index, key) {
+      this.v[key].$model.splice(index, 1);
     },
     show() {
-     this.visible = !this.visible
-     console.log("Visible",this.visible)
+      this.visible = !this.visible;
+      console.log("Visible", this.visible);
     },
-    showGender(x) {
-      if (x === 1) {
-        this.gender = !this.gender;
-        this.gender2 = false;
-      } else if (x === 2) {
-        this.gender2 = !this.gender2;
-        this.gender = false;
-      }
+    showGender(g, g2) {
+      this[g] = !this[g];
+      this[g2] = false;
     },
   },
 };
