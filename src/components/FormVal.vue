@@ -48,7 +48,7 @@
                     type="text"
                     v-model="v.email.$model"
                     :class="v.email.$error ? 'input__error' : ''"
-                    :disabled="disable"
+                   
                   />
                   <div v-if="v.email.$error" class="error">
                     البريد الالكتروني خاطيء
@@ -307,12 +307,11 @@
 
           <div class="row">
             <div
-              class="col-xl-6 col-sm-6 col-12"
-              style="align-items: center; display: flex"
+              class="col-xl-6 col-sm-6 col-12 gender__exception"
             >
               <div class="input_container ge">
                 <p>النوع</p>
-                <label style="align-items: flex-start">
+                <label class="ge__flex">
                   <label class="gneder">
                     <input
                       type="radio"
@@ -357,7 +356,8 @@
                           : 'DD/MM/YYYY'
                       "
                       v-maska="'##/##/####'"
-                      disabled="true"
+                      
+                    :disabled="disable"
                     />
                     <img
                       src="@/assets/Group2528.png"
@@ -368,7 +368,7 @@
                   <v-date-picker
                     v-show="visible"
                     v-model="v.date.$model"
-                    style="width: 100%"
+                    class="dateWidth"
                     @click="show(2)"
                   />
 
@@ -388,7 +388,7 @@
                 @click="submit()"
               >
                 <span v-if="done === false">تاكيد البيانات</span>
-                <span v-else style="color: green">تم التاكيد</span>
+                <span v-else class="confirmed">تم التاكيد</span>
               </button>
             </div>
             <div class="col-xl-6 col-sm-12 col-12" v-show="done">
@@ -398,7 +398,7 @@
                 @click="reset()"
               >
                 <span v-if="!resetV">اعاده البيانات</span>
-                <span v-else style="color: green">تمت الاعاده</span>
+                <span v-else class="confirmed">تمت الاعاده</span>
               </button>
 
               <button
@@ -407,7 +407,7 @@
                 @click="edit()"
               >
                 <span v-if="!editV">تعديل البيانات</span>
-                <span v-else style="color: green">تم التعديل</span>
+                <span v-else class="confirmed">تم التعديل</span>
               </button>
             </div>
           </div>
@@ -566,8 +566,10 @@ export default {
     show(x) {
       if (x === 1) {
         this.visible = true;
+        console.log("visible" , this.visible)
       } else if (x === 2) {
         this.visible = false;
+        console.log("visible" , this.visible)
       }
     },
     showGender(x) {
